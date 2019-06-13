@@ -23,6 +23,7 @@ SOFTWARE.
 #ifndef CORSIX_TH_TH_GFX_H_
 #define CORSIX_TH_TH_GFX_H_
 #include "th.h"
+#include "Adapters/lua_persist_reader.h"
 
 class lua_persist_reader;
 class lua_persist_writer;
@@ -550,7 +551,7 @@ public:
     void set_crop_column(int iColumn) {crop_column = iColumn;}
 
     void persist(lua_persist_writer *pWriter) const;
-    void depersist(lua_persist_reader *pReader);
+    void depersist(LuaPersistReader &pReader);
 
     animation_manager* get_animation_manager(){ return manager;}
 private:
@@ -591,7 +592,7 @@ public:
     bool is_dead() const {return lifetime == 0;}
 
     void persist(lua_persist_writer *pWriter) const;
-    void depersist(lua_persist_reader *pReader);
+    void depersist(LuaPersistReader &pReader);
 
 private:
     struct sprite

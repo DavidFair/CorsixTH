@@ -67,3 +67,7 @@ target_sources(CorsixTH
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.h
 )
+
+target_include_directories(CorsixTH_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Adapters)

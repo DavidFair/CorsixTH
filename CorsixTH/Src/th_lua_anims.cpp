@@ -24,6 +24,8 @@ SOFTWARE.
 #include "th_gfx.h"
 #include "th_map.h"
 
+#include "Adapters/lua_persist_reader.h"
+
 namespace {
 
 /* this variable is used to determine the layer of the animation, it should be rewriten at some
@@ -264,7 +266,9 @@ int l_anim_depersist(lua_State *L)
     lua_pushvalue(L, 2);
     lua_settable(L, -3);
     lua_pop(L, 1);
-    pAnimation->depersist(pReader);
+
+	LuaPersistReader shimmedReader(pReader);
+    pAnimation->depersist(shimmedReader);
     lua_rawgeti(L, luaT_environindex, 1);
     lua_pushlightuserdata(L, pAnimation);
     if(!pReader->read_stack_object())

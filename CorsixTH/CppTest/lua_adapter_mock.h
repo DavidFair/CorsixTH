@@ -19,39 +19,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-#include "catch2\catch.hpp"
+
+#ifndef CORSIXTH_LUA_ADAPTER_MOCK_H_
+#define CORSIXTH_LUA_ADAPTER_MOCK_H_
+
+#include "Adapters/lua_adapter.h"
 #include "trompeloeil.hpp"
 
-#include "lua_adapter_mock.h"
-#include "lua_persist_reader_mock.h"
-#include "th_gfx.h"
-
-TEST_CASE("depersist", "[th_gfx]") {
-	animation instance;
-	lua_State* mockState = luaL_newstate();
-
-	SECTION("depersist exits on bad lua stack read") {
-		PersistReaderMock mockedReader;
-
-		REQUIRE_CALL(mockedReader, get_stack()).RETURN(mockState);
-		
-		REQUIRE_CALL(mockedReader, read_stack_object()).RETURN(false);
-		REQUIRE_CALL(mockedReader, set_error(ANY(const char*)));
-
-		instance.depersist(mockedReader);
-	}
-
-	SECTION("depersist exits if flags can't be read") {
-		PersistReaderMock mockedReader;
-
-		REQUIRE_CALL(mockedReader, get_stack()).RETURN(mockState);
-		REQUIRE_CALL(mockedReader, read_stack_object()).RETURN(true);
-
-		REQUIRE_CALL(mockedReader, read_uint(ANY(uint32_t&))).RETURN(false);
-		REQUIRE_CALL(mockedReader, set_error(ANY(const char*)));
-
-		instance.depersist(mockedReader);
-	}
+class LuaAdapterMock : public LuaAdapter {
+	MAKE_CONST_MOCK2(pop, void(lua_State *L, int idx), override);
+	MAKE_CONST_MOCK2(toUserData, void*(lua_State *L, int idx), override);
 	
-	
-}
+};
+
+#endif // CORSIXTH_LUA_ADAPTER_MOCK_H_

@@ -19,6 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#ifndef CORSIXTH_TH_H_
+#define CORSIXTH_TH_H_
 
 #include "config.h"
 #include "th.h"
@@ -230,3 +232,5 @@ const char* th_string_list::get_string(size_t section, size_t index)
     }
     return nullptr;
 }
+
+#endif // !CORSIXTH_TH_H_

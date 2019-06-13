@@ -39,16 +39,21 @@ set_property(TARGET UnitTests PROPERTY CXX_STANDARD_REQUIRED ON)
 
 # Add the target to CTest
 add_test(NAME UnitTests COMMAND UnitTests)
-set_target_properties(UnitTests PROPERTIES FOLDER UnitTests)
-
+add_dependencies(UnitTests trompeloeil)
 # Make sure we add it as a dependency to all tests (some day we can add LuaTest here)
 add_dependencies(AllTests UnitTests)
 
 # List of all test files
 target_sources(UnitTests
     PRIVATE
+    # Main entry point
     ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
 
+    # Mock instances
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua_adapter_mock.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua_persist_reader_mock.h
+
+    # Unit test definitions
     ${CMAKE_CURRENT_SOURCE_DIR}/th_gfx_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/th_gfx_sdl_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/th_lua_anims_test.cpp

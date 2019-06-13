@@ -25,13 +25,14 @@ SOFTWARE.
 #include "config.h"
 #include <vector>
 
-//! Generic linked list class (for inheriting from)
+////! Generic linked list class (for inheriting from)
 class link_list
 {
 public:
     link_list() ;
     ~link_list();
 
+	// TODO change these to owning pointers
     link_list* prev;
     link_list* next;
 

@@ -19,39 +19,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-#include "catch2\catch.hpp"
+
+#ifndef CORSIXTH_LUA_PERSIST_READER_MOCK_H_
+#define CORSIXTH_LUA_PERSIST_READER_MOCK_H_
+
 #include "trompeloeil.hpp"
+#include "Adapters/lua_persist_reader.h"
 
-#include "lua_adapter_mock.h"
-#include "lua_persist_reader_mock.h"
-#include "th_gfx.h"
+#include <stdint.h>
 
-TEST_CASE("depersist", "[th_gfx]") {
-	animation instance;
-	lua_State* mockState = luaL_newstate();
 
-	SECTION("depersist exits on bad lua stack read") {
-		PersistReaderMock mockedReader;
 
-		REQUIRE_CALL(mockedReader, get_stack()).RETURN(mockState);
-		
-		REQUIRE_CALL(mockedReader, read_stack_object()).RETURN(false);
-		REQUIRE_CALL(mockedReader, set_error(ANY(const char*)));
+class PersistReaderMock : public LuaPersistReader
+{
 
-		instance.depersist(mockedReader);
-	}
+public:
+	// We can pass a nullptr as we don't use underlying class
+	PersistReaderMock() : LuaPersistReader(nullptr) {}
 
-	SECTION("depersist exits if flags can't be read") {
-		PersistReaderMock mockedReader;
-
-		REQUIRE_CALL(mockedReader, get_stack()).RETURN(mockState);
-		REQUIRE_CALL(mockedReader, read_stack_object()).RETURN(true);
-
-		REQUIRE_CALL(mockedReader, read_uint(ANY(uint32_t&))).RETURN(false);
-		REQUIRE_CALL(mockedReader, set_error(ANY(const char*)));
-
-		instance.depersist(mockedReader);
-	}
+    MAKE_MOCK0(get_stack, lua_State *(), override);
+    MAKE_MOCK0(read_stack_object, bool(), override);
 	
-	
-}
+	MAKE_MOCK1(read_int, bool(int&), override);
+	MAKE_MOCK1(read_uint, bool(uint32_t&), override);
+	MAKE_MOCK1(read_uint, bool(int&), override);
+	MAKE_MOCK1(read_uint, bool(size_t&), override);
+
+	MAKE_MOCK1(set_error, void(const char*), override);
+
+};
+
+#endif // !CORSIXTH_LUA_PERSIST_READER_MOCK_H_
