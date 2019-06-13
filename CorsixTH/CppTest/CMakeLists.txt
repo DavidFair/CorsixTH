@@ -21,11 +21,13 @@
 # SOFTWARE.
 
 find_package(Catch2 CONFIG REQUIRED)
+find_package(Trompeloeil REQUIRED)
 
 add_custom_target(AllTests)
 
 # Expose the header files from CorsixTH
 include_directories(${CMAKE_SOURCE_DIR}/CorsixTH/Src/)
+include_directories(${Trompeloeil_INCLUDE_DIR})
 
 add_executable(UnitTests "")
 target_link_libraries(UnitTests Catch2::Catch2)
@@ -46,5 +48,10 @@ add_dependencies(AllTests UnitTests)
 target_sources(UnitTests
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/example.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/th_gfx_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/th_gfx_sdl_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/th_lua_anims_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/th_map_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/th_test.cpp
 )
