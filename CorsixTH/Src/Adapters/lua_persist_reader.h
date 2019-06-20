@@ -24,25 +24,27 @@
 #define CORSIXTH_LUA_PERSIST_READER_H_
 
 #include "persist_lua.h"
+#include "virtual_macro.h"
+
 #include <stdint.h>
 
 class LuaPersistReader {
 public:
 	LuaPersistReader(lua_persist_reader *reader) : reader(reader) {}
 
-	virtual lua_State* get_stack();
-	virtual bool read_stack_object();
+	VIRTUAL_TESTABLE lua_State* get_stack();
+	VIRTUAL_TESTABLE bool read_stack_object();
 	
-	virtual bool read_byte_stream(uint8_t *pBytes, size_t iCount);
+	VIRTUAL_TESTABLE bool read_byte_stream(uint8_t *pBytes, size_t iCount);
 
 	// This was originally templated so we must deal with each type manually
 	// to allow mocking
-	virtual bool read_int(int &i);
-	virtual bool read_uint(int &i);
-	virtual bool read_uint(uint32_t &i);
-	virtual bool read_uint(size_t &i);
+	VIRTUAL_TESTABLE bool read_int(int &i);
+	VIRTUAL_TESTABLE bool read_uint(int &i);
+	VIRTUAL_TESTABLE bool read_uint(uint32_t &i);
+	VIRTUAL_TESTABLE bool read_uint(size_t &i);
 
-	virtual void set_error(const char *err);
+	VIRTUAL_TESTABLE void set_error(const char *err);
 
 private:
 	lua_persist_reader *reader;

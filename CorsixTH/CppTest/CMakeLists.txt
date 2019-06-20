@@ -43,6 +43,11 @@ add_dependencies(UnitTests trompeloeil)
 # Make sure we add it as a dependency to all tests (some day we can add LuaTest here)
 add_dependencies(AllTests UnitTests)
 
+# Ensure virtuals are correctly marked
+target_compile_definitions(CorsixTH_lib PUBLIC TESTING=1)
+
+set_target_properties(UnitTests PROPERTIES FOLDER tests)
+
 # List of all test files
 target_sources(UnitTests
     PRIVATE

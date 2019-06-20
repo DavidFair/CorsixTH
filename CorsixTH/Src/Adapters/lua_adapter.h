@@ -24,6 +24,7 @@ SOFTWARE.
 #define CORSIXTH_LUA_ADAPTER_H_
 
 #include "th_lua.h"
+#include "virtual_macro.h"
 
 /**
  * A simple adapter which directly translates all calls to the Lua
@@ -35,8 +36,8 @@ public:
 	LuaAdapter() = default;
 
 	// Mocked Lua API methods
-	virtual void pop(lua_State *L, int idx) const;
-	virtual void* toUserData(lua_State *L, int idx) const;
+	VIRTUAL_TESTABLE void pop(lua_State *L, int idx) const;
+	VIRTUAL_TESTABLE void* toUserData(lua_State *L, int idx) const;
 
 	static LuaAdapter& getAdapter() noexcept;
 	static void setAdapter(LuaAdapter &&newAdapter) noexcept;
