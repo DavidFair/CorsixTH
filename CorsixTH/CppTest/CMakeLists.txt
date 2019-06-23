@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-find_package(Catch2 CONFIG REQUIRED)
+find_package(Catch2 REQUIRED)
 find_package(Trompeloeil REQUIRED)
 
 add_custom_target(AllTests)
