@@ -24,7 +24,8 @@
 #define CORSIXTH_LUA_PERSIST_READER_MOCK_H_
 
 #include "trompeloeil.hpp"
-#include "Adapters/lua_persist_reader.h"
+#include "lua_persist_reader.h"
+#include "lua_state_wrapper.h"
 
 #include <stdint.h>
 
@@ -37,7 +38,7 @@ public:
 	// We can pass a nullptr as we don't use underlying class
 	PersistReaderMock() : LuaPersistReader(nullptr) {}
 
-    MAKE_MOCK0(get_stack, lua_State *(), override);
+    MAKE_MOCK0(get_stack, LuaStateWrapper(), override);
     MAKE_MOCK0(read_stack_object, bool(), override);
 	
 	MAKE_MOCK1(read_int, bool(int&), override);

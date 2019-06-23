@@ -20,37 +20,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef CORSIXTH_LUA_ADAPTER_H_
-#define CORSIXTH_LUA_ADAPTER_H_
+#ifndef CORSIXTH_LUA_STATE_WRAPPER_H_
+#define CORSIXTH_LUA_STATE_WRAPPER_H_
 
-#include "lua_state_wrapper.h"
 #include "virtual_macro.h"
+#include <lua.h>
 
-/**
- * A simple adapter which directly translates all calls to the Lua
- * API layer with no side effects. This can be derived from to provide
- * a mocking or fake injection point
- */
-class LuaAdapter {
+class LuaStateWrapper {
 public:
-	LuaAdapter() = default;
+	LuaStateWrapper(lua_State* existingState);
 
-	// Mocked Lua API methods
-	VIRTUAL_TESTABLE void getEnvField(LuaStateWrapper &L, int index, const char *k) const;
-	
-	VIRTUAL_TESTABLE void pop(LuaStateWrapper &L, int idx) const;
-	VIRTUAL_TESTABLE void pushLightUserData(LuaStateWrapper &L, void *p) const;
-	VIRTUAL_TESTABLE const char* pushfString(LuaStateWrapper &L, const char *fmt, int i) const;
-	
-	VIRTUAL_TESTABLE int rawGet(LuaStateWrapper &L, int idx) const;
-	VIRTUAL_TESTABLE int rawGetI(LuaStateWrapper &L, int idx, lua_Integer n) const;
-	
-	VIRTUAL_TESTABLE void* toUserData(LuaStateWrapper &L, int idx) const;
+	lua_State* get() const { return state; }
 
-	static LuaAdapter& getAdapter() noexcept;
-	static void setAdapter(LuaAdapter &&newAdapter) noexcept;
+protected:
+	// Used to instantiate a mock instance
+	LuaStateWrapper() = default;
+
 private:
-	static LuaAdapter adapterInstance;
+	lua_State *state = nullptr;
+
 };
 
-#endif //CORSIXTH_LUA_ADAPTER_H_
+#endif // !CORSIXTH_LUA_STATE_WRAPPER_H_

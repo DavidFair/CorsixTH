@@ -20,37 +20,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef CORSIXTH_LUA_ADAPTER_H_
-#define CORSIXTH_LUA_ADAPTER_H_
+#ifndef CORSIXTH_LUA_PERSIST_WRITER_H_
+#define CORSIXTH_LUA_PERSIST_WRITER_H_
 
 #include "lua_state_wrapper.h"
+#include "persist_lua.h"
 #include "virtual_macro.h"
 
-/**
- * A simple adapter which directly translates all calls to the Lua
- * API layer with no side effects. This can be derived from to provide
- * a mocking or fake injection point
- */
-class LuaAdapter {
+#include <cstdint>
+
+class LuaPersistWriter {
 public:
-	LuaAdapter() = default;
+	LuaPersistWriter(lua_persist_writer *writer) : writer(writer) {}
 
-	// Mocked Lua API methods
-	VIRTUAL_TESTABLE void getEnvField(LuaStateWrapper &L, int index, const char *k) const;
-	
-	VIRTUAL_TESTABLE void pop(LuaStateWrapper &L, int idx) const;
-	VIRTUAL_TESTABLE void pushLightUserData(LuaStateWrapper &L, void *p) const;
-	VIRTUAL_TESTABLE const char* pushfString(LuaStateWrapper &L, const char *fmt, int i) const;
-	
-	VIRTUAL_TESTABLE int rawGet(LuaStateWrapper &L, int idx) const;
-	VIRTUAL_TESTABLE int rawGetI(LuaStateWrapper &L, int idx, lua_Integer n) const;
-	
-	VIRTUAL_TESTABLE void* toUserData(LuaStateWrapper &L, int idx) const;
+	VIRTUAL_TESTABLE LuaStateWrapper get_stack() const;
+	VIRTUAL_TESTABLE void fastWriteStackObject(int iIndex) const;
+	VIRTUAL_TESTABLE void writeByteStream(const uint8_t *pBytes, size_t iCount) const;
+	VIRTUAL_TESTABLE void writeInt(int val) const;
+	VIRTUAL_TESTABLE void writeStackObject(int iIndex) const;
+	VIRTUAL_TESTABLE void writeUint(int val) const;
+	VIRTUAL_TESTABLE void writeUint(size_t val) const;
+	VIRTUAL_TESTABLE void writeUint(uint32_t val) const;
 
-	static LuaAdapter& getAdapter() noexcept;
-	static void setAdapter(LuaAdapter &&newAdapter) noexcept;
 private:
-	static LuaAdapter adapterInstance;
+	lua_persist_writer *writer;
+
 };
 
-#endif //CORSIXTH_LUA_ADAPTER_H_
+#endif // !CORSIXTH_LUA_PERSIST_WRITER_H_

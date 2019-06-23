@@ -21,8 +21,9 @@ SOFTWARE.
 */
 
 #include "config.h"
-#include "Adapters/lua_adapter.h"
-#include "Adapters/lua_persist_reader.h"
+#include "lua_adapter.h"
+#include "lua_persist_reader.h"
+#include "lua_persist_writer.h"
 #include "th_gfx.h"
 #include "persist_lua.h"
 #include "th_map.h"
@@ -1352,61 +1353,63 @@ animation::animation():
     is_multiple_frame_animation_fn = THAnimation_is_multiple_frame_animation;
 }
 
-void animation::persist(lua_persist_writer *pWriter) const
+void animation::persist(lua_persist_writer *oldWriter) const
 {
-    lua_State *L = pWriter->get_stack();
+	LuaPersistWriter pWriter(oldWriter);
+
+    LuaStateWrapper L = pWriter.get_stack();
 
     // Write the next chained thing
-    lua_rawgeti(L, luaT_environindex, 2);
-    lua_pushlightuserdata(L, next);
-    lua_rawget(L, -2);
-    pWriter->fast_write_stack_object(-1);
-    lua_pop(L, 2);
+    luaLayer.rawGetI(L, luaT_environindex, 2);
+    luaLayer.pushLightUserData(L, next);
+    luaLayer.rawGet(L, -2);
+    pWriter.fastWriteStackObject(-1);
+	luaLayer.pop(L, 2);
 
     // Write the drawable fields
-    pWriter->write_uint(flags);
+    pWriter.writeUint(flags);
 
     if (draw_fn == THAnimation_draw && hit_test_fn == THAnimation_hit_test)
-        pWriter->write_uint(1);
+        pWriter.writeUint(1);
     else if (draw_fn == THAnimation_draw_child && hit_test_fn == THAnimation_hit_test_child)
-        pWriter->write_uint(2);
+        pWriter.writeUint(2);
     else if(draw_fn == THAnimation_draw_morph && hit_test_fn == THAnimation_hit_test_morph)
     {
         // NB: Prior version of code used the number 3 here, and forgot
         // to persist the morph target.
-        pWriter->write_uint(4);
-        lua_rawgeti(L, luaT_environindex, 2);
-        lua_pushlightuserdata(L, morph_target);
-        lua_rawget(L, -2);
-        pWriter->write_stack_object(-1);
-        lua_pop(L, 2);
+        pWriter.writeUint(4);
+        luaLayer.rawGetI(L, luaT_environindex, 2);
+        luaLayer.pushLightUserData(L, morph_target);
+        luaLayer.rawGet(L, -2);
+        pWriter.writeStackObject(-1);
+        luaLayer.pop(L, 2);
     }
     else
-        pWriter->write_uint(0);
+        pWriter.writeUint(0);
 
     // Write the simple fields
-    pWriter->write_uint(animation_index);
-    pWriter->write_uint(frame_index);
-    pWriter->write_int(x_relative_to_tile);
-    pWriter->write_int(y_relative_to_tile);
-    pWriter->write_int((int)sound_to_play); // Not a uint, for compatibility
-    pWriter->write_int(0); // For compatibility
+    pWriter.writeUint(animation_index);
+    pWriter.writeUint(frame_index);
+    pWriter.writeUint(x_relative_to_tile);
+    pWriter.writeUint(y_relative_to_tile);
+    pWriter.writeUint((int)sound_to_play); // Not a uint, for compatibility
+    pWriter.writeUint(0); // For compatibility
     if(flags & thdf_crop)
-        pWriter->write_int(crop_column);
+        pWriter.writeInt(crop_column);
 
     // Write the unioned fields
     if(draw_fn != THAnimation_draw_child)
     {
-        pWriter->write_int(speed.dx);
-        pWriter->write_int(speed.dy);
+        pWriter.writeInt(speed.dx);
+        pWriter.writeInt(speed.dy);
     }
     else
     {
-        lua_rawgeti(L, luaT_environindex, 2);
-        lua_pushlightuserdata(L, parent);
-        lua_rawget(L, -2);
-        pWriter->write_stack_object(-1);
-        lua_pop(L, 2);
+        luaLayer.rawGetI(L, luaT_environindex, 2);
+        luaLayer.pushLightUserData(L, parent);
+        luaLayer.rawGet(L, -2);
+        pWriter.writeStackObject(-1);
+        luaLayer.pop(L, 2);
     }
 
     // Write the layers
@@ -1416,13 +1419,13 @@ void animation::persist(lua_persist_writer *pWriter) const
         if(layers.layer_contents[iNumLayers - 1] != 0)
             break;
     }
-    pWriter->write_uint(iNumLayers);
-    pWriter->write_byte_stream(layers.layer_contents, iNumLayers);
+    pWriter.writeUint(iNumLayers);
+    pWriter.writeByteStream(layers.layer_contents, iNumLayers);
 }
 
 void animation::depersist(LuaPersistReader &pReader)
 {
-    lua_State *L = pReader.get_stack();
+    LuaStateWrapper L = pReader.get_stack();
 
     do
     {
@@ -1462,7 +1465,7 @@ void animation::depersist(LuaPersistReader &pReader)
             luaLayer.pop(L, 1);
             break;
         default:
-            pReader.set_error(lua_pushfstring(L, "Unknown animation function set #%i", iFunctionSet));
+            pReader.set_error(luaLayer.pushfString(L, "Unknown animation function set #%i", iFunctionSet));
             return;
         }
 
@@ -1525,7 +1528,7 @@ void animation::depersist(LuaPersistReader &pReader)
         }
 
         // Fix the m_pAnimator field
-        luaT_getenvfield(L, 2, "animator");
+        luaLayer.getEnvField(L, 2, "animator");
         manager = (animation_manager*)luaLayer.toUserData(L, -1);
         luaLayer.pop(L, 1);
 
@@ -1887,7 +1890,7 @@ void sprite_render_list::persist(lua_persist_writer *pWriter) const
 
 void sprite_render_list::depersist(LuaPersistReader &pReader)
 {
-    lua_State *L = pReader.get_stack();
+    LuaStateWrapper L = pReader.get_stack();
 
     if(!pReader.read_uint(sprite_count))
         return;
@@ -1942,10 +1945,10 @@ void sprite_render_list::depersist(LuaPersistReader &pReader)
     next = reinterpret_cast<link_list*>(luaLayer.toUserData(L, -1));
     if(next)
         next->prev = this;
-    lua_pop(L, 1);
+    luaLayer.pop(L, 1);
 
     // Fix the sheet field
-    luaT_getenvfield(L, 2, "sheet");
+    luaLayer.getEnvField(L, 2, "sheet");
     sheet = (sprite_sheet*)luaLayer.toUserData(L, -1);
-    lua_pop(L, 1);
+    luaLayer.pop(L, 1);
 }

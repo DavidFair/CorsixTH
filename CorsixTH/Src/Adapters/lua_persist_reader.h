@@ -23,6 +23,7 @@
 #ifndef CORSIXTH_LUA_PERSIST_READER_H_
 #define CORSIXTH_LUA_PERSIST_READER_H_
 
+#include "lua_state_wrapper.h"
 #include "persist_lua.h"
 #include "virtual_macro.h"
 
@@ -32,7 +33,7 @@ class LuaPersistReader {
 public:
 	LuaPersistReader(lua_persist_reader *reader) : reader(reader) {}
 
-	VIRTUAL_TESTABLE lua_State* get_stack();
+	VIRTUAL_TESTABLE LuaStateWrapper get_stack();
 	VIRTUAL_TESTABLE bool read_stack_object();
 	
 	VIRTUAL_TESTABLE bool read_byte_stream(uint8_t *pBytes, size_t iCount);
@@ -45,6 +46,9 @@ public:
 	VIRTUAL_TESTABLE bool read_uint(size_t &i);
 
 	VIRTUAL_TESTABLE void set_error(const char *err);
+
+protected:
+	LuaPersistReader() : reader(nullptr) {}
 
 private:
 	lua_persist_reader *reader;

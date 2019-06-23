@@ -20,19 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CORSIXTH_LUA_ADAPTER_MOCK_H_
-#define CORSIXTH_LUA_ADAPTER_MOCK_H_
+#ifndef CORSIXTH_LUA_STATE_WRAPPER_MOCK_H_
+#define CORSIXTH_LUA_STATE_WRAPPER_MOCK_H_
 
-#include "lua_adapter.h"
 #include "lua_state_wrapper.h"
-#include "trompeloeil.hpp"
+
+class LuaStateWrapperMock : public LuaStateWrapper {
 
 
-class LuaAdapterMock : public LuaAdapter {
-	MAKE_CONST_MOCK2(pop, void(LuaStateWrapper &L, int idx), override);
-	MAKE_CONST_MOCK2(toUserData, void*(LuaStateWrapper &L, int idx), override);
-	MAKE_CONST_MOCK3(pushfString, const char*(LuaStateWrapper &L, const char *fmt, int i), override);
-	
 };
 
-#endif // CORSIXTH_LUA_ADAPTER_MOCK_H_
+#endif // !CORSIXTH_LUA_STATE_WRAPPER_MOCK_H_

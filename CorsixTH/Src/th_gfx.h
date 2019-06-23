@@ -23,7 +23,8 @@ SOFTWARE.
 #ifndef CORSIX_TH_TH_GFX_H_
 #define CORSIX_TH_TH_GFX_H_
 #include "th.h"
-#include "Adapters/lua_persist_reader.h"
+#include "lua_persist_reader.h"
+#include "lua_persist_writer.h"
 
 class lua_persist_reader;
 class lua_persist_writer;

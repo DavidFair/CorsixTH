@@ -232,7 +232,7 @@ int l_anim_persist(lua_State *L)
     lua_rawgeti(L, luaT_environindex, 1);
     lua_pushlightuserdata(L, pAnimation);
     lua_gettable(L, -2);
-    pWriter->write_stack_object(-1);
+	pWriter->write_stack_object(-1);
     lua_pop(L, 2);
     return 0;
 }

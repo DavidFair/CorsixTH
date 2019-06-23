@@ -45,8 +45,8 @@ add_dependencies(AllTests UnitTests)
 
 # Ensure virtuals are correctly marked
 target_compile_definitions(CorsixTH_lib PUBLIC TESTING=1)
-
 set_target_properties(UnitTests PROPERTIES FOLDER tests)
+
 
 # List of all test files
 target_sources(UnitTests
@@ -57,6 +57,7 @@ target_sources(UnitTests
     # Mock instances
     ${CMAKE_CURRENT_SOURCE_DIR}/lua_adapter_mock.h
     ${CMAKE_CURRENT_SOURCE_DIR}/lua_persist_reader_mock.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua_state_wrapper_mock.h
 
     # Unit test definitions
     ${CMAKE_CURRENT_SOURCE_DIR}/th_gfx_test.cpp

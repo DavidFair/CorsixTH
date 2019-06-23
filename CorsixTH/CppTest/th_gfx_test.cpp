@@ -19,16 +19,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 #include "catch2\catch.hpp"
 #include "trompeloeil.hpp"
 
 #include "lua_adapter_mock.h"
+#include "lua_state_wrapper_mock.h"
 #include "lua_persist_reader_mock.h"
 #include "th_gfx.h"
 
 TEST_CASE("depersist", "[th_gfx]") {
 	animation instance;
-	lua_State* mockState = luaL_newstate();
+	LuaStateWrapperMock mockState;
 
 	SECTION("depersist exits on bad lua stack read") {
 		PersistReaderMock mockedReader;
@@ -53,5 +55,6 @@ TEST_CASE("depersist", "[th_gfx]") {
 		instance.depersist(mockedReader);
 	}
 	
+
 	
 }

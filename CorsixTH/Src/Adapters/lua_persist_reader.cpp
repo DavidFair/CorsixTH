@@ -1,11 +1,12 @@
 #include "lua_persist_reader.h"
+#include "lua_state_wrapper.h"
 
 #include <stdint.h>
 
 
-lua_State* LuaPersistReader::get_stack()
+LuaStateWrapper LuaPersistReader::get_stack()
 {
-	return reader->get_stack();
+	return LuaStateWrapper(reader->get_stack());
 }
 
 bool LuaPersistReader::read_stack_object()
